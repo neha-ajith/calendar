@@ -1,8 +1,4 @@
 // ignore_for_file: prefer_const_constructors
-
-// https://medium.com/flutter-community/flutter-use-google-calendar-api-adding-the-events-to-calendar-3d8fcb008493
-
-import 'package:calendar/screens/calendar_page.dart';
 import 'package:calendar/screens/login_screen.dart';
 import 'package:calendar/utils/provider.dart';
 import 'package:flutter/material.dart';

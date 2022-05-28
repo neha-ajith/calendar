@@ -1,11 +1,13 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:calendar/screens/date.dart';
 import 'package:calendar/screens/event_editor.dart';
 import 'package:calendar/screens/login_screen.dart';
 import 'package:calendar/utils/authentication.dart';
+import 'package:calendar/utils/database.dart';
 import 'package:calendar/utils/event.dart';
 import 'package:calendar/utils/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -52,45 +54,61 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Calendar"),
-          leading: _isSigningOut
-              ? CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                )
-              : TextButton(
-                  onPressed: () async {
-                    setState(() {
-                      _isSigningOut = true;
-                    });
-                    await Authentication.signOut(context: context);
-                    setState(() {
-                      _isSigningOut = false;
-                    });
-                    Navigator.of(context)
-                        .pushReplacement(_routeToSignInScreen());
-                  },
-                  child: Text("Sign Out"),
+    return StreamProvider<QuerySnapshot>.value(
+      initialData: null,
+      value: DatabaseService().events,
+      child: Scaffold(
+          appBar: AppBar(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.person),
+                    SizedBox(width: 5),
+                    Text("${_user.displayName}", style: TextStyle(fontSize: 15))
+                  ],
                 ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => EventEditor()));
-          },
-          child: Icon(Icons.add),
-        ),
-        body: SafeArea(
-            child: SfCalendar(
-          onTap: (calendarTapDetails) => showDialog(
-              context: context, builder: (context) => Date(calendarTapDetails)),
-          dataSource: EventDataSource(_getDataSource()),
-          view: CalendarView.month,
-          monthViewSettings: MonthViewSettings(
-            appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+                _isSigningOut
+                    ? CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      )
+                    : TextButton(
+                        onPressed: () async {
+                          setState(() {
+                            _isSigningOut = true;
+                          });
+                          await Authentication.signOut(context: context);
+                          setState(() {
+                            _isSigningOut = false;
+                          });
+                          Navigator.of(context)
+                              .pushReplacement(_routeToSignInScreen());
+                        },
+                        child: Text("Sign Out"),
+                      ),
+              ],
+            ),
           ),
-        )));
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => EventEditor()));
+            },
+            child: Icon(Icons.add),
+          ),
+          body: SafeArea(
+              child: SfCalendar(
+            onTap: (calendarTapDetails) => showDialog(
+                context: context,
+                builder: (context) => Date(calendarTapDetails)),
+            dataSource: EventDataSource(_getDataSource()),
+            view: CalendarView.month,
+            monthViewSettings: MonthViewSettings(
+              appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+            ),
+          ))),
+    );
   }
 
   List<Event> _getDataSource() {
