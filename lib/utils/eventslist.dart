@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:calendar/utils/event.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,11 +12,12 @@ class EventsList extends StatefulWidget {
 class _EventsListState extends State<EventsList> {
   @override
   Widget build(BuildContext context) {
-    final events = Provider.of<QuerySnapshot>(context);
-    // print(events.docs);
-    for (var doc in events.docs) {
-      print(doc.data());
-    }
+    final events = Provider.of<List<Event>>(context);
+
+    events.forEach((event) {
+      print(event.title);
+    });
+
     return Container();
   }
 }

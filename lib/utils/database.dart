@@ -9,13 +9,13 @@ class DatabaseService {
       FirebaseFirestore.instance.collection("events");
 
   Future updateUserData(String title, String description, DateTime from,
-      DateTime to, String backgroundColor, bool isAllDay) async {
+      DateTime to, Color backgroundColor, bool isAllDay) async {
     return await eventCollection.doc(uid).set({
       'title': title,
       'description': description,
       'from': from,
       'to': to,
-      'bgColor': backgroundColor,
+      'bgColor': backgroundColor.value,
       'isAllDay': isAllDay
     });
   }
@@ -31,7 +31,7 @@ class DatabaseService {
         .toList();
   }
 
-  Stream<QuerySnapshot> get events {
-    return eventCollection.snapshots();
+  Stream<List<Event>> get events {
+    return eventCollection.snapshots().map(_eventListFromSnapshot);
   }
 }

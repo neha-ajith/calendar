@@ -55,7 +55,7 @@ class _SignInButtonState extends State<SignInButton> {
                         "It's neha's bdayyyyy!!!",
                         DateTime.now(),
                         DateTime.now().add(Duration(hours: 2)),
-                        "Red",
+                        Colors.red,
                         true);
                   }
                 }

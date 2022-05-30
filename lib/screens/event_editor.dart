@@ -193,15 +193,14 @@ class _EventEditorState extends State<EventEditor> {
   Future saveEvent() async {
     final isValid = _formKey.currentState!.validate();
     if (isValid) {
-      final colors = [0xff00FF00, 0xffFFC0CB, 0xffFFFF00, 0xff0000FF];
-      //  Colors.pink, Colors.yellow, Colors.blue];
+      final colors = [Colors.red, Colors.pink, Colors.yellow, Colors.blue];
       var random = Random();
       final index = random.nextInt(colors.length);
       final event = Event(
           title: titleController.text,
           from: from,
           to: to,
-          backgroundColor: Color(colors[index]));
+          backgroundColor: colors[index]);
       final provider = Provider.of<EventProvider>(context, listen: false);
       provider.addEvent(event);
       Navigator.of(context).pop();
